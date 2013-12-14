@@ -58,17 +58,58 @@ func Cleanup() {
 	C.fap_cleanup()
 }
 
-func (c *_Ctype_fap_packet_t) error() error {
-	if c.error_code == nil {
-		return nil
+func ParseAprs(input string, isAX25 bool) (*FapPacket, error) {
+	c_input := C.CString(input)
+	defer C.free(unsafe.Pointer(c_input))
+
+	c_len := C.uint(C.strlen(c_input))
+
+	var c_isAX25 C.short
+	if isAX25 {
+		c_isAX25 = 1
 	}
 
-	buffer := C.new_c_str(64)
+	c_fapPacket := C.fap_parseaprs(c_input, c_len, c_isAX25)
+	defer C.fap_free(c_fapPacket)
+
+	if c_fapPacket == nil {
+		log.Fatal("fap_parseaprs returned nil. Is libfap initialized?")
+	}
+
+	fapPacket, err := c_fapPacket.goFapPacket()
+
+	return fapPacket, err
+}
+
+func Distance(lon0, lat0, lon1, lat1 float64) float64 {
+	c_dist := C.fap_distance(
+		C.double(lon0), C.double(lat0),
+		C.double(lon1), C.double(lat1),
+	)
+
+	return float64(c_dist)
+}
+
+func Direction(lon0, lat0, lon1, lat1 float64) float64 {
+	c_dir := C.fap_direction(
+		C.double(lon0), C.double(lat0),
+		C.double(lon1), C.double(lat1),
+	)
+
+	return float64(c_dir)
+}
+
+func MicEMbitsToMessage(mbits string) string {
+	if mbits == "" {
+		log.Fatal("MicEMbitsToMessage() called with empty string")
+	}
+
+	buffer := C.new_c_str(60)
 	defer C.free(unsafe.Pointer(buffer))
 
-	C.fap_explain_error(*c.error_code, buffer)
+	C.fap_mice_mbits_to_message(C.CString(mbits), buffer)
 
-	return errors.New(C.GoString(buffer))
+	return C.GoString(buffer)
 }
 
 func (c *_Ctype_fap_packet_t) goFapPacket() (*FapPacket, error) {
@@ -157,56 +198,15 @@ func (c *_Ctype_fap_packet_t) goFapPacket() (*FapPacket, error) {
 	return &packet, err
 }
 
-func Distance(lon0, lat0, lon1, lat1 float64) float64 {
-	c_dist := C.fap_distance(
-		C.double(lon0), C.double(lat0),
-		C.double(lon1), C.double(lat1),
-	)
-
-	return float64(c_dist)
-}
-
-func Direction(lon0, lat0, lon1, lat1 float64) float64 {
-	c_dir := C.fap_direction(
-		C.double(lon0), C.double(lat0),
-		C.double(lon1), C.double(lat1),
-	)
-
-	return float64(c_dir)
-}
-
-func MicEMbitsToMessage(mbits string) string {
-	if mbits == "" {
-		log.Fatal("MicEMbitsToMessage() called with empty string")
+func (c *_Ctype_fap_packet_t) error() error {
+	if c.error_code == nil {
+		return nil
 	}
 
-	buffer := C.new_c_str(60)
+	buffer := C.new_c_str(64)
 	defer C.free(unsafe.Pointer(buffer))
 
-	C.fap_mice_mbits_to_message(C.CString(mbits), buffer)
+	C.fap_explain_error(*c.error_code, buffer)
 
-	return C.GoString(buffer)
-}
-
-func ParseAprs(input string, isAX25 bool) (*FapPacket, error) {
-	c_input := C.CString(input)
-	defer C.free(unsafe.Pointer(c_input))
-
-	c_len := C.uint(C.strlen(c_input))
-
-	var c_isAX25 C.short
-	if isAX25 {
-		c_isAX25 = 1
-	}
-
-	c_fapPacket := C.fap_parseaprs(c_input, c_len, c_isAX25)
-	defer C.fap_free(c_fapPacket)
-
-	if c_fapPacket == nil {
-		log.Fatal("fap_parseaprs returned nil. Is libfap initialized?")
-	}
-
-	fapPacket, err := c_fapPacket.goFapPacket()
-
-	return fapPacket, err
+	return errors.New(C.GoString(buffer))
 }
