@@ -16,6 +16,27 @@ HAM::APRS::FAP is available at <http://search.cpan.org/dist/Ham-APRS-FAP/>
 
 * latest libfap (<http://www.pakettiradio.net/libfap/>)
 
+## Usage
+Simple program that decodes the APRS-IS feed (omitting errors):
+
+	func main() {
+		defer fap.Cleanup()
+
+		conn, _ := net.Dial("tcp", "rotate.aprs.net:23")
+		fmt.Fprintf(conn, "user N0CALL pass -1 vers gofap 0.00\r\n")
+
+		reader := bufio.NewReader(conn)
+		for {
+			line, err := reader.ReadString('\n')
+			if err == io.EOF {
+				break
+			}
+
+			packet, _ := fap.ParseAprs(line, false)
+			fmt.Println(packet)
+		}
+	}
+
 ## Missing features / Things you can help with
 
 * wx_report
