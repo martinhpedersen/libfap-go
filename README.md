@@ -9,7 +9,7 @@ go get github.com/martinhpedersen/gofap
 Libfap is a C port of the Ham::APRS::FAP Finnish APRS Parser perl
 module. As the original Perl code, libfap parses normal, mic-e and
 compressed location packets, NMEA location packets, objects, items,
-maessages, telemetry and most weather packets. More information on
+messages, telemetry and most weather packets. More information on
 HAM::APRS::FAP is available at <http://search.cpan.org/dist/Ham-APRS-FAP/>
 
 ## Requirements
