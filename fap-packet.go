@@ -19,21 +19,21 @@ type FapPacket struct {
 	DstCallsign string
 	Path        []string
 
-	Latitude  *float64
-	Longitude *float64
+	Latitude  float64
+	Longitude float64
 	Format    uint // See const
 
-	PosResolution *float64
-	PosAmbiguity  *uint
+	PosResolution float64
+	PosAmbiguity  uint
 	DaoDatumByte  byte
-	Altitude      *float64
-	Course        *uint
-	Speed         *float64
+	Altitude      float64
+	Course        uint
+	Speed         float64
 
 	SymbolTable byte
 	SymbolCode  byte
 
-	Messaging   *bool
+	Messaging   bool
 	Destination string
 	Message     string
 	MessageAck  string
@@ -42,12 +42,12 @@ type FapPacket struct {
 
 	Comment          string
 	ObjectOrItemName string
-	Alive            *bool
-	GpsFixStatus     *bool
-	RadioRange       *uint
+	Alive            bool
+	GpsFixStatus     bool
+	RadioRange       uint
 	Phg              string
 	Timestamp        time.Time
-	NmeaChecksumOk   *bool
+	NmeaChecksumOk   bool
 
 	WxReport  string
 	Telemetry string
@@ -69,14 +69,14 @@ func (a *FapPacket) Distance(b *FapPacket) (float64, error) {
 	if b == nil {
 		return 0, errors.New("Distance between A and nil is undefined")
 	}
-	if a.Latitude == nil || a.Longitude == nil ||
-		b.Longitude == nil || b.Latitude == nil {
+	if a.Latitude == 0 || a.Longitude == 0 ||
+		b.Longitude == 0 || b.Latitude == 0 {
 		return 0, errors.New("One or more components is nil when calculating distance")
 	}
 
 	return Distance(
-		*a.Latitude, *a.Longitude,
-		*b.Latitude, *b.Longitude,
+		a.Latitude, a.Longitude,
+		b.Latitude, b.Longitude,
 	), nil
 }
 
@@ -84,14 +84,14 @@ func (a *FapPacket) Direction(b *FapPacket) (float64, error) {
 	if b == nil {
 		return 0, errors.New("Direction between A and nil is undefined")
 	}
-	if a.Latitude == nil || a.Longitude == nil ||
-		b.Longitude == nil || b.Latitude == nil {
+	if a.Latitude == 0 || a.Longitude == 0 ||
+		b.Longitude == 0 || b.Latitude == 0 {
 		return 0, errors.New("One or more components is nil when calculating direction")
 	}
 
 	return Direction(
-		*a.Latitude, *a.Longitude,
-		*b.Latitude, *b.Longitude,
+		a.Latitude, a.Longitude,
+		b.Latitude, b.Longitude,
 	), nil
 }
 
@@ -123,13 +123,9 @@ func (p *FapPacket) String() string {
 		fmt.Fprintf(buffer, "Path: %q\n", p.Path)
 	}
 
-	if p.Latitude != nil && p.Longitude != nil {
-		fmt.Fprintf(buffer, "Pos: %f,%f\n", *p.Latitude, *p.Longitude)
-	}
+	fmt.Fprintf(buffer, "Pos: %f,%f\n", p.Latitude, p.Longitude)
 
-	if p.Speed != nil {
-		fmt.Fprintf(buffer, "Speed: %.0fkm/h\n", *p.Speed)
-	}
+	fmt.Fprintf(buffer, "Speed: %.0fkm/h\n", p.Speed)
 
 	if p.Comment != "" {
 		fmt.Fprintf(buffer, "Comment: %s\n", strings.TrimSpace(p.Comment))

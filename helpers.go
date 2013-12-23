@@ -1,32 +1,31 @@
 package fap
 
-import "C"
+import (
+	"C"
+)
 
-func goUnsignedIntPtr(c_uint *_Ctype_uint) *uint {
+func goUnsignedInt(c_uint *_Ctype_uint) uint {
 	if c_uint == nil {
-		return nil
+		return 0
 	}
-	v := uint(*c_uint)
 
-	return &v
+	return uint(*c_uint)
 }
 
-func goFloat64Ptr(c_double *_Ctype_double) *float64 {
+func goFloat64(c_double *_Ctype_double) float64 {
 	if c_double == nil {
-		return nil
+		return 0
 	}
-	v := float64(*c_double)
 
-	return &v
+	return float64(*c_double)
 }
 
-func goBoolPtr(c_short *_Ctype_short) *bool {
+func goBool(c_short *_Ctype_short) bool {
 	if c_short == nil {
-		return nil
+		return false
 	}
-	v := uint(*c_short) == 1
 
-	return &v
+	return uint(*c_short) == 1
 }
 
 func goString(c_str *_Ctype_char) string {

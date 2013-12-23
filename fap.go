@@ -131,19 +131,19 @@ func (c *_Ctype_fap_packet_t) goFapPacket() (*FapPacket, error) {
 		// path (set below)
 		// path_len (removed)
 
-		Latitude:      goFloat64Ptr(c.latitude),
-		Longitude:     goFloat64Ptr(c.longitude),
-		PosResolution: goFloat64Ptr(c.pos_resolution),
-		PosAmbiguity:  goUnsignedIntPtr(c.pos_ambiguity),
+		Latitude:      goFloat64(c.latitude),
+		Longitude:     goFloat64(c.longitude),
+		PosResolution: goFloat64(c.pos_resolution),
+		PosAmbiguity:  goUnsignedInt(c.pos_ambiguity),
 		DaoDatumByte:  byte(c.dao_datum_byte), // 0x00 = undef
-		Altitude:      goFloat64Ptr(c.altitude),
-		Course:        goUnsignedIntPtr(c.course),
-		Speed:         goFloat64Ptr(c.speed),
+		Altitude:      goFloat64(c.altitude),
+		Course:        goUnsignedInt(c.course),
+		Speed:         goFloat64(c.speed),
 
 		SymbolTable: byte(c.symbol_table), // 0x00 = undef
 		SymbolCode:  byte(c.symbol_code),  // 0x00 = undef
 
-		Messaging:   goBoolPtr(c.messaging),
+		Messaging:   goBool(c.messaging),
 		Destination: goString(c.destination),
 		Message:     goString(c.message),
 		MessageAck:  goString(c.message_ack),
@@ -154,13 +154,13 @@ func (c *_Ctype_fap_packet_t) goFapPacket() (*FapPacket, error) {
 		// comment_len (removed)
 
 		ObjectOrItemName: goString(c.object_or_item_name),
-		Alive:            goBoolPtr(c.alive),
-		GpsFixStatus:     goBoolPtr(c.gps_fix_status),
-		RadioRange:       goUnsignedIntPtr(c.radio_range),
+		Alive:            goBool(c.alive),
+		GpsFixStatus:     goBool(c.gps_fix_status),
+		RadioRange:       goUnsignedInt(c.radio_range),
 		Phg:              goString(c.phg),
 
 		// timestamp (set below)
-		NmeaChecksumOk: goBoolPtr(c.nmea_checksum_ok),
+		NmeaChecksumOk: goBool(c.nmea_checksum_ok),
 
 		// wx_report (TODO)
 		// telemetry (TODO)
