@@ -54,10 +54,16 @@ func init() {
 	C.fap_init()
 }
 
+// Cleanup should be called when done using this package.
 func Cleanup() {
 	C.fap_cleanup()
 }
 
+// ParseAprs is the main parser method. Parses content of input
+// string. Setting isAX25 to true source callsign and path
+// elements are checked to be strictly compatible with AX.25
+// specs so that theycan be sent into AX.25 network. Destination
+// callsign is always checked this way.
 func ParseAprs(input string, isAX25 bool) (*FapPacket, error) {
 	c_input := C.CString(input)
 	defer C.free(unsafe.Pointer(c_input))
@@ -81,6 +87,8 @@ func ParseAprs(input string, isAX25 bool) (*FapPacket, error) {
 	return fapPacket, err
 }
 
+// Calculates distance between given locations,
+// returning the the distance in kilometers.
 func Distance(lon0, lat0, lon1, lat1 float64) float64 {
 	c_dist := C.fap_distance(
 		C.double(lon0), C.double(lat0),
@@ -90,6 +98,7 @@ func Distance(lon0, lat0, lon1, lat1 float64) float64 {
 	return float64(c_dist)
 }
 
+// Calculates direction from first to second location.
 func Direction(lon0, lat0, lon1, lat1 float64) float64 {
 	c_dir := C.fap_direction(
 		C.double(lon0), C.double(lat0),
@@ -99,6 +108,8 @@ func Direction(lon0, lat0, lon1, lat1 float64) float64 {
 	return float64(c_dir)
 }
 
+// MicEMbitsToMessage converts mic-e message bits (three numbers 0-2)
+// to a textual message.
 func MicEMbitsToMessage(mbits string) string {
 	if mbits == "" {
 		log.Fatal("MicEMbitsToMessage() called with empty string")
