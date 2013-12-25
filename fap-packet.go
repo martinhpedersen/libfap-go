@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// FapPacket is the APRS packet type
 type FapPacket struct {
 	PacketType uint // See const
 	OrigPacket string
@@ -57,6 +58,13 @@ type FapPacket struct {
 	Capabilities []string
 }
 
+// HasLocation returns true if packet has location
+// data.
+func (p *FapPacket) HasLocation() bool {
+	return (p.Latitude != 0 && p.Longitude != 0)
+}
+
+// MicEMessage returns the texual Mic-E message.
 func (p *FapPacket) MicEMessage() string {
 	if p.Messagebits == "" {
 		return ""
@@ -65,6 +73,7 @@ func (p *FapPacket) MicEMessage() string {
 	return MicEMbitsToMessage(p.Messagebits)
 }
 
+// Distance returns the distance to the given packet b in km.
 func (a *FapPacket) Distance(b *FapPacket) (float64, error) {
 	if b == nil {
 		return 0, errors.New("Distance between A and nil is undefined")
@@ -75,8 +84,8 @@ func (a *FapPacket) Distance(b *FapPacket) (float64, error) {
 	}
 
 	return Distance(
-		a.Latitude, a.Longitude,
-		b.Latitude, b.Longitude,
+		a.Longitude, a.Latitude,
+		b.Longitude, b.Latitude,
 	), nil
 }
 
@@ -90,8 +99,8 @@ func (a *FapPacket) Direction(b *FapPacket) (float64, error) {
 	}
 
 	return Direction(
-		a.Latitude, a.Longitude,
-		b.Latitude, b.Longitude,
+		a.Longitude, a.Latitude,
+		b.Longitude, b.Latitude,
 	), nil
 }
 
@@ -123,7 +132,9 @@ func (p *FapPacket) String() string {
 		fmt.Fprintf(buffer, "Path: %q\n", p.Path)
 	}
 
-	fmt.Fprintf(buffer, "Pos: %f,%f\n", p.Latitude, p.Longitude)
+	if p.HasLocation() {
+		fmt.Fprintf(buffer, "Pos: %f,%f\n", p.Latitude, p.Longitude)
+	}
 
 	fmt.Fprintf(buffer, "Speed: %.0fkm/h\n", p.Speed)
 
