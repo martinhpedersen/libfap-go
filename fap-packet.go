@@ -61,7 +61,7 @@ type FapPacket struct {
 // HasLocation returns true if packet has location
 // data.
 func (p *FapPacket) HasLocation() bool {
-	return (p.Latitude != 0 && p.Longitude != 0)
+	return p.Format != POSUNKNOWN
 }
 
 // MicEMessage returns the texual Mic-E message.
