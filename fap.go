@@ -64,7 +64,7 @@ func Cleanup() {
 // elements are checked to be strictly compatible with AX.25
 // specs so that theycan be sent into AX.25 network. Destination
 // callsign is always checked this way.
-func ParseAprs(input string, isAX25 bool) (*FapPacket, error) {
+func ParseAprs(input string, isAX25 bool) (*Packet, error) {
 	c_input := C.CString(input)
 	defer C.free(unsafe.Pointer(c_input))
 
@@ -75,16 +75,16 @@ func ParseAprs(input string, isAX25 bool) (*FapPacket, error) {
 		c_isAX25 = 1
 	}
 
-	c_fapPacket := C.fap_parseaprs(c_input, c_len, c_isAX25)
-	defer C.fap_free(c_fapPacket)
+	c_packet := C.fap_parseaprs(c_input, c_len, c_isAX25)
+	defer C.fap_free(c_packet)
 
-	if c_fapPacket == nil {
+	if c_packet == nil {
 		log.Fatal("fap_parseaprs returned nil. Is libfap initialized?")
 	}
 
-	fapPacket, err := c_fapPacket.goFapPacket()
+	packet, err := c_packet.goPacket()
 
-	return fapPacket, err
+	return packet, err
 }
 
 // Calculates distance between given locations,
@@ -123,10 +123,10 @@ func MicEMbitsToMessage(mbits string) string {
 	return C.GoString(buffer)
 }
 
-func (c *_Ctype_fap_packet_t) goFapPacket() (*FapPacket, error) {
+func (c *_Ctype_fap_packet_t) goPacket() (*Packet, error) {
 	err := c.error()
 
-	packet := FapPacket{
+	packet := Packet{
 		// error_code (removed)
 		// type -> PacketType (set below)
 

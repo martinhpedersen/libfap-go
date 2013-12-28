@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// FapPacket is the APRS packet type
-type FapPacket struct {
+// Packet is the APRS packet type
+type Packet struct {
 	PacketType uint // See const
 	OrigPacket string
 
@@ -60,12 +60,12 @@ type FapPacket struct {
 
 // HasLocation returns true if packet has location
 // data.
-func (p *FapPacket) HasLocation() bool {
+func (p *Packet) HasLocation() bool {
 	return p.Format != POSUNKNOWN
 }
 
 // MicEMessage returns the texual Mic-E message.
-func (p *FapPacket) MicEMessage() string {
+func (p *Packet) MicEMessage() string {
 	if p.Messagebits == "" {
 		return ""
 	}
@@ -74,7 +74,7 @@ func (p *FapPacket) MicEMessage() string {
 }
 
 // Distance returns the distance to the given packet b in km.
-func (a *FapPacket) Distance(b *FapPacket) (float64, error) {
+func (a *Packet) Distance(b *Packet) (float64, error) {
 	if b == nil {
 		return 0, errors.New("Distance between A and nil is undefined")
 	}
@@ -89,7 +89,7 @@ func (a *FapPacket) Distance(b *FapPacket) (float64, error) {
 	), nil
 }
 
-func (a *FapPacket) Direction(b *FapPacket) (float64, error) {
+func (a *Packet) Direction(b *Packet) (float64, error) {
 	if b == nil {
 		return 0, errors.New("Direction between A and nil is undefined")
 	}
@@ -106,7 +106,7 @@ func (a *FapPacket) Direction(b *FapPacket) (float64, error) {
 
 var cardinals = []string{"N", "NE", "E", "SE", "S", "SW", "W", "NW"}
 
-func (a *FapPacket) HumanReadableDirection(b *FapPacket) (string, error) {
+func (a *Packet) HumanReadableDirection(b *Packet) (string, error) {
 	degrees, err := a.Direction(b)
 	if err != nil {
 		return "", err
@@ -115,7 +115,7 @@ func (a *FapPacket) HumanReadableDirection(b *FapPacket) (string, error) {
 	return cardinals[int((degrees+22.5)/45.0)%8], err
 }
 
-func (p *FapPacket) String() string {
+func (p *Packet) String() string {
 	buffer := bytes.NewBufferString("")
 
 	if p.PacketType == OBJECT {
