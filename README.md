@@ -1,8 +1,8 @@
-# gofap - A go wrapper for libfap - APRS parser
+# fap - A go wrapper for libfap - APRS parser
 
 ## Install
 
-go get github.com/martinhpedersen/gofap
+go get github.com/martinhpedersen/libfap-go
 
 ## libfap
 
@@ -23,7 +23,7 @@ Simple program that decodes the APRS-IS feed (omitting errors):
 		defer fap.Cleanup()
 
 		conn, _ := net.Dial("tcp", "rotate.aprs.net:23")
-		fmt.Fprintf(conn, "user N0CALL pass -1 vers gofap 0.00\r\n")
+		fmt.Fprintf(conn, "user N0CALL pass -1 vers goAPRS 0.00\r\n")
 
 		reader := bufio.NewReader(conn)
 		for {
@@ -54,7 +54,7 @@ by Martin Hebnes Pedersen, LA5NTA.
 
 Libfap is free software; for more details see <http://www.pakettiradio.net/libfap/>.
 
-Gofap is also free software; 
+libfap-go is also free software; 
 
 Copyright (c) 2013, Contributors and Martin Hebnes Pedersen
 All rights reserved.
@@ -64,3 +64,4 @@ Redistribution and use in source and binary forms, with or without modification,
 - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
