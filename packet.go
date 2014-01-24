@@ -1,5 +1,8 @@
 package fap
 
+//#include <fap.h>
+import "C"
+
 import (
 	"bytes"
 	"errors"
@@ -8,9 +11,37 @@ import (
 	"time"
 )
 
+const (
+	UNKNOWN          PacketType = 0
+	LOCATION         PacketType = C.fapLOCATION
+	OBJECT           PacketType = C.fapOBJECT
+	ITEM             PacketType = C.fapITEM
+	MICE             PacketType = C.fapMICE
+	NMEA             PacketType = C.fapNMEA
+	WX               PacketType = C.fapWX
+	MESSAGE          PacketType = C.fapMESSAGE
+	CAPABILITIES     PacketType = C.fapCAPABILITIES
+	STATUS           PacketType = C.fapSTATUS
+	TELEMETRY        PacketType = C.fapTELEMETRY
+	TELEMETRYMESSAGE PacketType = C.fapTELEMETRY_MESSAGE
+	DXSPOT           PacketType = C.fapDX_SPOT
+	EXPERIMENTAL     PacketType = C.fapEXPERIMENTAL
+)
+
+const (
+	POS_UNKNOWN      PositionFormat = 0
+	POS_COMPRESSED   PositionFormat = C.fapPOS_COMPRESSED
+	POS_UNCOMPRESSED PositionFormat = C.fapPOS_UNCOMPRESSED
+	POS_MICE         PositionFormat = C.fapPOS_MICE
+	POS_NMEA         PositionFormat = C.fapPOS_NMEA
+)
+
+type PacketType uint
+type PositionFormat uint
+
 // Packet is the APRS packet type
 type Packet struct {
-	PacketType uint // See const
+	Type       PacketType
 	OrigPacket string
 
 	Header string
@@ -20,10 +51,9 @@ type Packet struct {
 	DstCallsign string
 	Path        []string
 
-	Latitude  float64
-	Longitude float64
-	Format    uint // See const
-
+	Latitude      float64
+	Longitude     float64
+	PosFormat     PositionFormat
 	PosResolution float64
 	PosAmbiguity  uint
 	DaoDatumByte  byte
@@ -61,7 +91,7 @@ type Packet struct {
 // HasLocation returns true if packet has location
 // data.
 func (p *Packet) HasLocation() bool {
-	return p.Format != POSUNKNOWN
+	return p.PosFormat != POS_UNKNOWN
 }
 
 // MicEMessage returns the texual Mic-E message.
@@ -118,7 +148,7 @@ func (a *Packet) HumanReadableDirection(b *Packet) (string, error) {
 func (p *Packet) String() string {
 	buffer := bytes.NewBufferString("")
 
-	if p.PacketType == OBJECT {
+	if p.Type == OBJECT {
 		fmt.Fprintf(buffer, "%s (via %s)\n", strings.TrimSpace(p.ObjectOrItemName), p.SrcCallsign)
 	} else {
 		fmt.Fprintf(buffer, "%s\n", p.SrcCallsign)

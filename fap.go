@@ -25,31 +25,6 @@ import (
 	"unsafe"
 )
 
-const (
-	UNKNOWN          = 0
-	LOCATION         = C.fapLOCATION
-	OBJECT           = C.fapOBJECT
-	ITEM             = C.fapITEM
-	MICE             = C.fapMICE
-	NMEA             = C.fapNMEA
-	WX               = C.fapWX
-	MESSAGE          = C.fapMESSAGE
-	CAPABILITIES     = C.fapCAPABILITIES
-	STATUS           = C.fapSTATUS
-	TELEMETRY        = C.fapTELEMETRY
-	TELEMETRYMESSAGE = C.fapTELEMETRY_MESSAGE
-	DXSPOT           = C.fapDX_SPOT
-	EXPERIMENTAL     = C.fapEXPERIMENTAL
-)
-
-const (
-	POSUNKNOWN      = 0
-	POSCOMPRESSED   = C.fapPOS_COMPRESSED
-	POSUNCOMPRESSED = C.fapPOS_UNCOMPRESSED
-	POSMICE         = C.fapPOS_MICE
-	POSNMEA         = C.fapPOS_NMEA
-)
-
 func init() {
 	C.fap_init()
 }
@@ -185,10 +160,10 @@ func (c *_Ctype_fap_packet_t) goPacket() (*Packet, error) {
 	}
 
 	if C.packet_type(c) != nil {
-		packet.PacketType = uint(*C.packet_type(c))
+		packet.Type = PacketType(*C.packet_type(c))
 	}
 	if c.format != nil {
-		packet.Format = uint(*c.format)
+		packet.PosFormat = PositionFormat(*c.format)
 	}
 	if c.status != nil {
 		packet.Status = C.GoStringN(c.status, C.int(c.status_len))
