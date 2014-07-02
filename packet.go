@@ -11,8 +11,44 @@ import (
 	"time"
 )
 
+func (t PacketType) String() string {
+	switch (t) {
+		case UNKNOWN:
+			return "Unknown"
+		case LOCATION:
+			return "Location"
+		case OBJECT:
+			return "Object"
+		case ITEM:
+			return "Item"
+		case MICE:
+			return "Mic-E"
+		case NMEA:
+			return "NMEA"
+		case WX:
+			return "WX"
+		case MESSAGE:
+			return "Message"
+		case CAPABILITIES:
+			return "Capabilities"
+		case STATUS:
+			return "Status"
+		case TELEMETRY:
+			return "Telemetry"
+		case TELEMETRYMESSAGE:
+			return "Telemetry Message"
+		case DXSPOT:
+			return "DX Spot"
+		case EXPERIMENTAL:
+			return "Experimental"
+		default:
+			panic(fmt.Sprintf("Missing Stringer for %d", t))
+	}
+	return ""
+}
+
 const (
-	UNKNOWN          PacketType = 0
+	UNKNOWN          PacketType = -1
 	LOCATION         PacketType = C.fapLOCATION
 	OBJECT           PacketType = C.fapOBJECT
 	ITEM             PacketType = C.fapITEM
@@ -29,15 +65,15 @@ const (
 )
 
 const (
-	POS_UNKNOWN      PositionFormat = 0
+	POS_UNKNOWN      PositionFormat = -1
 	POS_COMPRESSED   PositionFormat = C.fapPOS_COMPRESSED
 	POS_UNCOMPRESSED PositionFormat = C.fapPOS_UNCOMPRESSED
 	POS_MICE         PositionFormat = C.fapPOS_MICE
 	POS_NMEA         PositionFormat = C.fapPOS_NMEA
 )
 
-type PacketType uint
-type PositionFormat uint
+type PacketType int
+type PositionFormat int
 
 // Packet is the APRS packet type
 type Packet struct {
@@ -146,7 +182,7 @@ func (a *Packet) IntercardinalDirection(b *Packet) (string, error) {
 }
 
 func (p *Packet) String() string {
-	buffer := bytes.NewBufferString("")
+	buffer := bytes.NewBufferString(fmt.Sprintf("%s: ", p.Type))
 
 	if p.Type == OBJECT {
 		fmt.Fprintf(buffer, "%s (via %s)\n", strings.TrimSpace(p.ObjectOrItemName), p.SrcCallsign)

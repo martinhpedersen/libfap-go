@@ -25,6 +25,8 @@ import (
 	"unsafe"
 )
 
+type fap_packet_t C.fap_packet_t
+
 func init() {
 	C.fap_init()
 }
@@ -57,7 +59,7 @@ func ParseAprs(input string, isAX25 bool) (*Packet, error) {
 		log.Fatal("fap_parseaprs returned nil. Is libfap initialized?")
 	}
 
-	packet, err := c_packet.goPacket()
+	packet, err := (*fap_packet_t)(c_packet).goPacket()
 
 	return packet, err
 }
@@ -98,12 +100,12 @@ func MicEMbitsToMessage(mbits string) string {
 	return C.GoString(buffer)
 }
 
-func (c *_Ctype_fap_packet_t) goPacket() (*Packet, error) {
+func (c *fap_packet_t) goPacket() (*Packet, error) {
 	err := c.error()
 
 	packet := Packet{
 		// error_code (removed)
-		// type -> PacketType (set below)
+		Type: UNKNOWN, // set below
 
 		OrigPacket: goString(c.orig_packet),
 		// orig_packet_len (removed)
@@ -121,6 +123,7 @@ func (c *_Ctype_fap_packet_t) goPacket() (*Packet, error) {
 		Longitude:     goFloat64(c.longitude),
 		PosResolution: goFloat64(c.pos_resolution),
 		PosAmbiguity:  goUnsignedInt(c.pos_ambiguity),
+		PosFormat: POS_UNKNOWN, // set below
 		DaoDatumByte:  byte(c.dao_datum_byte), // 0x00 = undef
 		Altitude:      goFloat64(c.altitude),
 		Course:        goUnsignedInt(c.course),
@@ -159,8 +162,8 @@ func (c *_Ctype_fap_packet_t) goPacket() (*Packet, error) {
 		// capabilities_len (removed)
 	}
 
-	if C.packet_type(c) != nil {
-		packet.Type = PacketType(*C.packet_type(c))
+	if t := C.packet_type((*C.fap_packet_t)(c)); t != nil {
+		packet.Type = PacketType(*t)
 	}
 	if c.format != nil {
 		packet.PosFormat = PositionFormat(*c.format)
@@ -184,7 +187,7 @@ func (c *_Ctype_fap_packet_t) goPacket() (*Packet, error) {
 	return &packet, err
 }
 
-func (c *_Ctype_fap_packet_t) error() error {
+func (c *fap_packet_t) error() error {
 	if c.error_code == nil {
 		return nil
 	}
