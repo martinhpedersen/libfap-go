@@ -136,7 +136,7 @@ func (a *Packet) Direction(b *Packet) (float64, error) {
 
 var cardinals = []string{"N", "NE", "E", "SE", "S", "SW", "W", "NW"}
 
-func (a *Packet) HumanReadableDirection(b *Packet) (string, error) {
+func (a *Packet) IntercardinalDirection(b *Packet) (string, error) {
 	degrees, err := a.Direction(b)
 	if err != nil {
 		return "", err
