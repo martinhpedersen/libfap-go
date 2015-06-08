@@ -9,7 +9,7 @@ package fap
 char* str_at(char **lst, int idx) {
     return lst[idx];
 }
-char* new_c_str(uint size) {
+char* new_c_str(unsigned int size) {
     return (char*) malloc( size*sizeof(char) );
 }
 fap_packet_type_t* packet_type(fap_packet_t *p) {
