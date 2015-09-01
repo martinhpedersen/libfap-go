@@ -177,6 +177,9 @@ func (c *fap_packet_t) goPacket() (*Packet, error) {
 	if c.timestamp != nil {
 		packet.Timestamp = time.Unix(int64(*c.timestamp), 0)
 	}
+	if c.raw_timestamp != nil {
+		packet.RawTimestamp = goString(c.raw_timestamp)
+	}
 
 	// Get path
 	packet.Path = make([]string, int(c.path_len))

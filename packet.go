@@ -114,6 +114,7 @@ type Packet struct {
 	RadioRange       uint
 	Phg              string
 	Timestamp        time.Time
+	RawTimestamp     string
 	NmeaChecksumOk   bool
 
 	WxReport  string
