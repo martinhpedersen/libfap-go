@@ -14,7 +14,7 @@ HAM::APRS::FAP is available at <http://search.cpan.org/dist/Ham-APRS-FAP/>
 
 ## Requirements
 
-* latest libfap (<http://www.pakettiradio.net/libfap/>)
+* libfap version >= 1.4 (<http://www.pakettiradio.net/libfap/>)
 
 ## Usage
 Simple program that decodes the APRS-IS feed (omitting errors):
