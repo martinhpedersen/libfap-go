@@ -12,37 +12,37 @@ import (
 )
 
 func (t PacketType) String() string {
-	switch (t) {
-		case UNKNOWN:
-			return "Unknown"
-		case LOCATION:
-			return "Location"
-		case OBJECT:
-			return "Object"
-		case ITEM:
-			return "Item"
-		case MICE:
-			return "Mic-E"
-		case NMEA:
-			return "NMEA"
-		case WX:
-			return "WX"
-		case MESSAGE:
-			return "Message"
-		case CAPABILITIES:
-			return "Capabilities"
-		case STATUS:
-			return "Status"
-		case TELEMETRY:
-			return "Telemetry"
-		case TELEMETRYMESSAGE:
-			return "Telemetry Message"
-		case DXSPOT:
-			return "DX Spot"
-		case EXPERIMENTAL:
-			return "Experimental"
-		default:
-			panic(fmt.Sprintf("Missing Stringer for %d", t))
+	switch t {
+	case UNKNOWN:
+		return "Unknown"
+	case LOCATION:
+		return "Location"
+	case OBJECT:
+		return "Object"
+	case ITEM:
+		return "Item"
+	case MICE:
+		return "Mic-E"
+	case NMEA:
+		return "NMEA"
+	case WX:
+		return "WX"
+	case MESSAGE:
+		return "Message"
+	case CAPABILITIES:
+		return "Capabilities"
+	case STATUS:
+		return "Status"
+	case TELEMETRY:
+		return "Telemetry"
+	case TELEMETRYMESSAGE:
+		return "Telemetry Message"
+	case DXSPOT:
+		return "DX Spot"
+	case EXPERIMENTAL:
+		return "Experimental"
+	default:
+		panic(fmt.Sprintf("Missing Stringer for %d", t))
 	}
 	return ""
 }
@@ -75,7 +75,7 @@ const (
 type PacketType int
 type PositionFormat int
 
-// Packet is the APRS packet type
+// Packet is the type representing a parsed APRS packet.
 type Packet struct {
 	Type       PacketType
 	OrigPacket string
@@ -125,8 +125,7 @@ type Packet struct {
 	Capabilities []string
 }
 
-// HasLocation returns true if packet has location
-// data.
+// HasLocation returns true if packet has location data.
 func (p *Packet) HasLocation() bool {
 	return p.PosFormat != POS_UNKNOWN
 }

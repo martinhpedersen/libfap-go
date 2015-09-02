@@ -36,11 +36,10 @@ func Cleanup() {
 	C.fap_cleanup()
 }
 
-// ParseAprs is the main parser method. Parses content of input
-// string. Setting isAX25 to true source callsign and path
-// elements are checked to be strictly compatible with AX.25
-// specs so that theycan be sent into AX.25 network. Destination
-// callsign is always checked this way.
+// ParseAprs parses the raw packet given as an input string.
+//
+// If isAX25 is true, source callsign and path elements are checked to be strictly compatible with AX.25 specs so that they can be sent into AX.25 network.
+// (Destination callsign is always checked this way.)
 func ParseAprs(input string, isAX25 bool) (*Packet, error) {
 	c_input := C.CString(input)
 	defer C.free(unsafe.Pointer(c_input))
@@ -64,8 +63,7 @@ func ParseAprs(input string, isAX25 bool) (*Packet, error) {
 	return packet, err
 }
 
-// Calculates distance between given locations,
-// returning the the distance in kilometers.
+// Calculates distance between given locations, returning the distance in kilometers.
 func Distance(lon0, lat0, lon1, lat1 float64) float64 {
 	c_dist := C.fap_distance(
 		C.double(lon0), C.double(lat0),
@@ -75,7 +73,7 @@ func Distance(lon0, lat0, lon1, lat1 float64) float64 {
 	return float64(c_dist)
 }
 
-// Calculates direction from first to second location.
+// Direction calculates direction from first to second location.
 func Direction(lon0, lat0, lon1, lat1 float64) float64 {
 	c_dir := C.fap_direction(
 		C.double(lon0), C.double(lat0),
@@ -85,8 +83,7 @@ func Direction(lon0, lat0, lon1, lat1 float64) float64 {
 	return float64(c_dir)
 }
 
-// MicEMbitsToMessage converts mic-e message bits (three numbers 0-2)
-// to a textual message.
+// MicEMbitsToMessage converts mic-e message bits (three numbers 0-2) to a textual message.
 func MicEMbitsToMessage(mbits string) string {
 	if mbits == "" {
 		log.Fatal("MicEMbitsToMessage() called with empty string")
@@ -123,7 +120,7 @@ func (c *fap_packet_t) goPacket() (*Packet, error) {
 		Longitude:     goFloat64(c.longitude),
 		PosResolution: goFloat64(c.pos_resolution),
 		PosAmbiguity:  goUnsignedInt(c.pos_ambiguity),
-		PosFormat: POS_UNKNOWN, // set below
+		PosFormat:     POS_UNKNOWN,            // set below
 		DaoDatumByte:  byte(c.dao_datum_byte), // 0x00 = undef
 		Altitude:      goFloat64(c.altitude),
 		Course:        goUnsignedInt(c.course),
